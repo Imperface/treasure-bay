@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { mongo } from 'mongoose';
 
 @Schema()
-export class Cell {
+export class Field {
   @Prop({ required: true })
   cells: [
     {
@@ -13,6 +13,9 @@ export class Cell {
       openingDate: { type: null | Date; default: null };
     },
   ];
+
+  @Prop({ required: true })
+  createdAt: Date;
 }
 
-export const CellSchema = SchemaFactory.createForClass(Cell);
+export const FieldSchema = SchemaFactory.createForClass(Field);

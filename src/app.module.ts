@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { CellsModule } from './cells/cells.module';
+import { FieldsModule } from './fields/fields.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    CellsModule,
+    FieldsModule,
     MongooseModule.forRoot(`${process.env.DB_URI}`),
   ],
 })

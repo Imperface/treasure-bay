@@ -1,4 +1,4 @@
-export class GenerateCellsDto {
+export class GenerateFieldDto {
   rows: number;
   columns: number;
   coordinates: [number, number];
