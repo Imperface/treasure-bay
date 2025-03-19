@@ -16,4 +16,13 @@ export class FieldsService {
   }) {
     return this.fieldModel.create({ cells, createdAt });
   }
+
+  getAllFieldsAdmin() {
+    return this.fieldModel.find();
+  }
+
+  getFieldsById(id: string) {
+    return this.fieldModel.findById(id);
+  }
+  
 }

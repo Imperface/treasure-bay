@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { FieldsService } from './fields.service';
 import { GenerateFieldDto } from './dto/generateField.dto';
 import { generateCells } from 'src/utils/generateCells';
@@ -15,7 +22,25 @@ export class CellsController {
 
     const field = { cells, createdAt: new Date() };
 
-    const createdField = await this.fieldsService.generateField(field);
-    return createdField;
+    const { errors } = await this.fieldsService.generateField(field);
+
+    if (errors) {
+      throw new HttpException('Bad request', 400);
+    }
+
+    return {
+      message: 'Field generated',
+      field,
+    };
+  }
+
+  @Get()
+  async getAllFieldsAdmin() {
+    return await this.fieldsService.getAllFieldsAdmin();
+  }
+
+  @Get(':id')
+  async getFieldsById(@Param('id') id: string) {
+    return await this.fieldsService.getFieldsById(id);
   }
 }
