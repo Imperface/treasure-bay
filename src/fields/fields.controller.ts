@@ -12,8 +12,8 @@ import { generateCells } from 'src/utils/generateCells';
 import { rewards } from 'src/constants/rewards';
 
 @Controller('fields')
-export class CellsController {
-  constructor(private fieldsService: FieldsService) {}
+export class FieldsController {
+  constructor(private readonly fieldsService: FieldsService) {}
 
   @Post('generate')
   async generate(@Body() { rows, columns }: GenerateFieldDto) {
