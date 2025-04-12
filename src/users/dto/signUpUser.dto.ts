@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-export class CreateUserDto {
+export class SignUpUserDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(48)
@@ -9,11 +9,8 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(48)
-  name: string;
+  nickname: string;
 
-  // password: string;
-  // role: string;
-  // isActivated: boolean;
-  // activationLink: string;
-  // status: string;
+  @IsString()
+  password: string;
 }

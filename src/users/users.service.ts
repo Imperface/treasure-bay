@@ -1,49 +1,82 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UseFilters,
+} from '@nestjs/common';
+import { SignUpUserDto } from './dto/signUpUser.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schemas/User.schema';
 import { Model } from 'mongoose';
-import { OnlyIDParamDTO } from './dto/id.dto';
+import { OnlyIDParamDTO } from './dto/onlyIDParam.dto';
+import { genSalt, hash } from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return this.userModel.create(createUserDto);
-  }
+  async signUpUser(signUpUserDto: SignUpUserDto): Promise<User> {
+    const existingUser = await this.getUserByEmail(signUpUserDto.email);
 
-  blockUser(id: OnlyIDParamDTO) {
-    return this.userModel.findByIdAndUpdate(id, {
-      status: false,
-      isActivated: false,
+    if (existingUser) {
+      throw new HttpException('Email already in use', HttpStatus.CONFLICT);
+    }
+    
+    const salt = await genSalt();
+
+    const hashedPassword = await hash(signUpUserDto.password, salt);
+
+    const newUser = new this.userModel({
+      ...signUpUserDto,
+      password: hashedPassword,
     });
+    return newUser.save();
   }
 
-  unBlockUser(id: string) {
-    return this.userModel.findByIdAndUpdate(id, {
-      status: true,
-      isActivated: true,
-    });
+  getUserByEmail(email: string) {
+    return this.userModel.findOne({ email });
   }
 
-  async findAll() {
-    return this.userModel.find();
+  updateToken(id: OnlyIDParamDTO, token: string) {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      { token },
+      { new: true, fields: '-password' }
+    );
   }
 
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
+  getUserById(id: string) {
+    return this.userModel.findById(id);
+  }
+
+  // blockUser(id: string) {
+  //   return this.userModel.findByIdAndUpdate(
+  //     id,
+  //     {
+  //       status: false,
+  //       isActivated: false,
+  //     },
+  //     { new: true }
+  //   );
   // }
-  // findAll() {
-  //   return `This action returns all users`;
+
+  // unBlockUser(id: string) {
+  //   return this.userModel.findByIdAndUpdate(
+  //     id,
+  //     {
+  //       status: true,
+  //       isActivated: true,
+  //     },
+  //     { new: true }
+  //   );
   // }
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
+
+  // async findAll() {
+  //   return this.userModel.find();
   // }
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
+
+  // updateAttempts(id: string, attempts: number) {
+  //   return this.userModel.findByIdAndUpdate(id, { attempts }, { new: true });
   // }
 }

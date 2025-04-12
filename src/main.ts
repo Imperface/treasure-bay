@@ -10,6 +10,7 @@ const bootstrap = async () => {
     new ValidationPipe({
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
+      whitelist: true,
     })
   );
 

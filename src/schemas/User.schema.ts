@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { mongo } from 'mongoose';
 
 @Schema()
 export class User {
@@ -7,22 +6,28 @@ export class User {
   email: string;
 
   @Prop({ required: true })
-  name: string;
+  nickname: string;
 
   @Prop({ required: true })
   password: string;
 
-  @Prop({ required: true, default: 'USER' })
+  @Prop({ default: 'USER' })
   role: 'USER' | 'ADMIN';
 
-  @Prop({ required: true })
+  @Prop({ default: true })
   isActivated: boolean;
 
-  @Prop({ required: true })
+  @Prop({ default: 'defaultLink' })
   activationLink: string;
 
-  @Prop({ required: true })
+  @Prop({ default: true })
   status: boolean;
+
+  @Prop({ default: 0 })
+  attempts: number;
+
+  @Prop({ default: '' })
+  token: '' | string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
