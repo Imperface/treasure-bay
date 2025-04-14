@@ -17,6 +17,8 @@ import { MongoExceptionFilter } from 'src/utils/mongoExceptionFilter';
 import { OnlyIDParamDTO } from './dto/onlyIDParam.dto';
 import { UpdateAttemptsDto } from './dto/updateAttempts.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/auth/roles-guard/roles.guard';
+import { Roles } from 'src/auth/roles-guard/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -28,8 +30,9 @@ export class UsersController {
     return this.usersService.signUpUser(signUpUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
+  @Roles('SUPER_ADMIN')
   getUserById(@Request() req) {
     console.log('getUserById', req.user);
 

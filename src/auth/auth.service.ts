@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { OnlyIDParamDTO } from 'src/users/dto/onlyIDParam.dto';
+import { SignInEmailDto, SignInPasswordDto } from './dto/signIn.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
       return null;
     }
 
-    const isPasswordMatching = await compare(pass, user.password);
+    const isPasswordMatching = await compare(String(pass), user.password);
 
     if (isPasswordMatching) {
       return user;

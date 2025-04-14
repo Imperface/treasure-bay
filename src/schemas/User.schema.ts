@@ -12,7 +12,7 @@ export class User {
   password: string;
 
   @Prop({ default: 'USER' })
-  role: 'USER' | 'ADMIN';
+  role: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
 
   @Prop({ default: true })
   isActivated: boolean;

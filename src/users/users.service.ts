@@ -11,6 +11,7 @@ import { Model } from 'mongoose';
 import { OnlyIDParamDTO } from './dto/onlyIDParam.dto';
 import { genSalt, hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { SignInEmailDto } from 'src/auth/dto/signIn.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,15 +19,11 @@ export class UsersService {
 
   async signUpUser(signUpUserDto: SignUpUserDto): Promise<User> {
     const existingUser = await this.getUserByEmail(signUpUserDto.email);
-
     if (existingUser) {
       throw new HttpException('Email already in use', HttpStatus.CONFLICT);
     }
-    
     const salt = await genSalt();
-
     const hashedPassword = await hash(signUpUserDto.password, salt);
-
     const newUser = new this.userModel({
       ...signUpUserDto,
       password: hashedPassword,
