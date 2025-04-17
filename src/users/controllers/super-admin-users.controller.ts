@@ -11,32 +11,23 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { SignUpUserDto } from './dto/signUpUser.dto';
+import { UsersService } from '../users.service';
 import { MongoExceptionFilter } from 'src/utils/mongoExceptionFilter';
-import { OnlyIDParamDTO } from './dto/onlyIDParam.dto';
-import { UpdateAttemptsDto } from './dto/updateAttempts.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles-guard/roles.guard';
 import { Roles } from 'src/auth/roles-guard/roles.decorator';
+import { UpdateRoleDto } from '../dto/update-role.dto';
 
-@Controller('users')
-export class UsersController {
+@Controller('users-super-admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@UseFilters(MongoExceptionFilter)
+export class UsersSuperAdminController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('sign-up')
-  @UseFilters(MongoExceptionFilter)
-  signUpUser(@Body() signUpUserDto: SignUpUserDto) {
-    return this.usersService.signUpUser(signUpUserDto);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get()
   @Roles('SUPER_ADMIN')
-  getUserById(@Request() req) {
-    console.log('getUserById', req.user);
-
-    return this.usersService.getUserById(req.user.id);
+  @Patch('role')
+  updateRole(@Request() req, @Body() { id, role }: UpdateRoleDto) {
+    return this.usersService.updateRole({ id, role });
   }
 
   // @Post('block/:id')

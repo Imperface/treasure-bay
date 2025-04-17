@@ -1,11 +1,9 @@
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { EmailDto } from './email.dto';
+import { PasswordDto } from './password.dto';
+import e from 'express';
 
-export class SignUpUserDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(48)
-  email: string;
-
+export class SignUpUserDto extends EmailDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(48)

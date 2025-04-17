@@ -11,14 +11,6 @@ export class SignInDto {
   password: string;
 }
 
-export class SignInEmailDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(20)
-  @IsEmail()
-  email: string;
-}
-
 export class SignInPasswordDto {
   @IsString()
   @MaxLength(20)

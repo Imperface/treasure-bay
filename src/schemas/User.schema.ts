@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Role } from 'src/enums/role.enum';
 
 @Schema()
 export class User {
@@ -11,8 +12,8 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ default: 'USER' })
-  role: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
+  @Prop({ type: String, enum: Role, default: Role.USER })
+  role: Role;
 
   @Prop({ default: true })
   isActivated: boolean;

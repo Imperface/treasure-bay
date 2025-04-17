@@ -2,8 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { OnlyIDParamDTO } from 'src/users/dto/onlyIDParam.dto';
-import { SignInEmailDto, SignInPasswordDto } from './dto/signIn.dto';
+import { IdDto } from 'src/users/dto/id.dto';
+import { SignInPasswordDto } from './dto/signIn.dto';
+import { EmailDto } from 'src/users/dto/email.dto';
+import { PasswordDto } from 'src/users/dto/password.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,9 +14,8 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: EmailDto, pass: PasswordDto): Promise<any> {
     const user = await this.usersService.getUserByEmail(email);
-
     if (user === null || !user) {
       return null;
     }
@@ -28,7 +29,7 @@ export class AuthService {
     return null;
   }
 
-  async signIn(id: OnlyIDParamDTO, email: string) {
+  async signIn(id: IdDto, email: EmailDto) {
     const payload = { id, email };
 
     const token = this.jwtService.sign(payload);

@@ -7,9 +7,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInEmailDto, SignInPasswordDto } from './dto/signIn.dto';
+import { SignInPasswordDto } from './dto/signIn.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { EmailDto } from 'src/users/dto/email.dto';
+import { PasswordDto } from 'src/users/dto/password.dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -17,12 +19,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'email' });
   }
 
-  async validate(
-    email: SignInEmailDto,
-    password: SignInPasswordDto
-  ): Promise<any> {
-    const emailDto = plainToInstance(SignInEmailDto, { email });
-    const passwordDto = plainToInstance(SignInPasswordDto, { password });
+  async validate(email: EmailDto, password: PasswordDto): Promise<any> {
+    const emailDto = plainToInstance(EmailDto, { email });
+    const passwordDto = plainToInstance(PasswordDto, { password });
 
     const emailErrors = await validate(emailDto);
     const passwordErrors = await validate(passwordDto);
@@ -34,10 +33,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    const user = await this.authService.validateUser(
-      String(email),
-      String(password)
-    );
+    const user = await this.authService.validateUser(email, password);
+
     if (!user) {
       throw new UnauthorizedException();
     }

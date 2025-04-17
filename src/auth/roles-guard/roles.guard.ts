@@ -10,30 +10,29 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // get the roles metadata from the handler
     const requiredRoles = this.reflector.get<string[]>(
       'roles',
       context.getHandler()
     );
 
-    console.log('requiredRoles', requiredRoles);
+    // if no roles are specified, allow access
     if (!requiredRoles) {
-      return true; // Якщо ролі не вказані, доступ дозволено
+      return true;
     }
 
+    // get the request object from the context
     const request = context.switchToHttp().getRequest();
+    const user = request.user;
 
-    const user = request.user; // Дані користувача з JWT токена
-
-    console.log('user', user);
-    // Отримуємо користувача з бази даних
+    // get the user from the database
     const dbUser = await this.usersService.getUserById(user.id);
 
-    console.log('dbUser', dbUser);
     if (!dbUser) {
-      return false; // Користувач не знайдений
+      return false;
     }
 
-    // Перевіряємо, чи роль користувача відповідає одній із необхідних ролей
+    // check if the user's role is in the required roles
     return requiredRoles.includes(dbUser.role);
   }
 }

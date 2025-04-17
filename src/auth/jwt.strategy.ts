@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { fuckingJWTSecret } from 'src/constants/fuckingJWTSecret';
-import { OnlyIDParamDTO } from 'src/users/dto/onlyIDParam.dto';
+import { EmailDto } from 'src/users/dto/email.dto';
+import { IdDto } from 'src/users/dto/id.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { id: OnlyIDParamDTO; email: string }) {
+  async validate(payload: { id: IdDto; email: EmailDto }) {
     return { id: payload.id, email: payload.email };
   }
 }
