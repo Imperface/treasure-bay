@@ -14,7 +14,7 @@ const bootstrap = async () => {
       whitelist: true,
     })
   );
-  app.useGlobalFilters(new MongoExceptionFilter());
+  // app.useGlobalFilters(new MongoExceptionFilter());
 
   await app.listen(process.env.PORT ?? 5843);
 };

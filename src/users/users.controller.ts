@@ -23,7 +23,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('sign-up')
-  @UseFilters(MongoExceptionFilter)
+  // @UseFilters(MongoExceptionFilter)
   signUpUser(@Body() signUpDto: SignUpUserDto): Promise<{ message: string }> {
     console.log('signUpDto', signUpDto);
     return this.usersService.signUpUser(signUpDto);
