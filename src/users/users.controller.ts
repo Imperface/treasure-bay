@@ -25,6 +25,7 @@ export class UsersController {
   @Post('sign-up')
   @UseFilters(MongoExceptionFilter)
   signUpUser(@Body() signUpDto: SignUpUserDto): Promise<{ message: string }> {
+    console.log('signUpDto', signUpDto);
     return this.usersService.signUpUser(signUpDto);
   }
 
