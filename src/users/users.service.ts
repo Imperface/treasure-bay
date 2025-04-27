@@ -1,37 +1,47 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SignUpUserDto } from './dto/signUpUser.dto';
+import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schemas/User.schema';
 import { Model } from 'mongoose';
 import { IdDto } from './dto/id.dto';
 import { genSalt, hash } from 'bcrypt';
-
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { EmailDto } from './dto/email.dto';
+import { SignUpUserResponseDto } from './dto/sign-up-user-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async signUpUser(signUpUserDto: SignUpUserDto): Promise<User> {
-    const existingUser = await this.getUserByEmail({
-      email: signUpUserDto.email,
-    });
+  async signUpUser(signUpUserDto: SignUpUserDto): Promise<{ message: string }> {
+    const existingUserEmail = await this.getUserByEmail(signUpUserDto.email);
 
-    if (existingUser) {
-      throw new HttpException('Email already in use', HttpStatus.CONFLICT);
+    const existingUserNickname = await this.getUserByNickname(
+      signUpUserDto.nickname
+    );
+
+    if (existingUserEmail || existingUserNickname) {
+      throw new HttpException(
+        'Email or nickname already in use.',
+        HttpStatus.CONFLICT
+      );
     }
-    
+
     const salt = await genSalt(10);
     const hashedPassword = await hash(signUpUserDto.password, salt);
     const newUser = new this.userModel({
       ...signUpUserDto,
       password: hashedPassword,
     });
-    return newUser.save();
+    const user = await newUser.save();
+    console.log('user', user);
+
+    return { message: 'User created successfully' };
   }
 
-  getUserByEmail(email: EmailDto) {
+  getUserByNickname(nickname: string) {
+    return this.userModel.findOne({ nickname });
+  }
+
+  getUserByEmail(email: string) {
     return this.userModel.findOne({ email });
   }
 
@@ -49,42 +59,4 @@ export class UsersService {
   getUserById(id: string) {
     return this.userModel.findById(id);
   }
-
-  updateRole({ id, role }: UpdateRoleDto) {
-    return this.userModel.findByIdAndUpdate(
-      id,
-      { role },
-      { new: true, fields: '-password' }
-    );
-  }
-
-  // blockUser(id: string) {
-  //   return this.userModel.findByIdAndUpdate(
-  //     id,
-  //     {
-  //       status: false,
-  //       isActivated: false,
-  //     },
-  //     { new: true }
-  //   );
-  // }
-
-  // unBlockUser(id: string) {
-  //   return this.userModel.findByIdAndUpdate(
-  //     id,
-  //     {
-  //       status: true,
-  //       isActivated: true,
-  //     },
-  //     { new: true }
-  //   );
-  // }
-
-  // async findAll() {
-  //   return this.userModel.find();
-  // }
-
-  // updateAttempts(id: string, attempts: number) {
-  //   return this.userModel.findByIdAndUpdate(id, { attempts }, { new: true });
-  // }
 }
