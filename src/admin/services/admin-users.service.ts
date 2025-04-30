@@ -11,37 +11,79 @@ import { UpdateUserAttemptsDto } from 'src/users/dto/update-user-attempts.dto';
 export class AdminUsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  getUserById(idDto: IdDto) {
+  async getUserById(idDto: IdDto): Promise<User> {
+    // get id from dto
     const { id } = idDto;
-    return this.userModel.findById(id);
+
+    // get user by id
+    const user = await this.userModel.findById(id);
+
+    // return error if user not found
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    // return user without password and activationLink
+    return user;
   }
 
-  updateUserRole(updateUserRoleDto: UpdateUserRoleDto) {
+  async updateUserRole(updateUserRoleDto: UpdateUserRoleDto): Promise<User> {
+    // get id and role from dto
     const { id, role } = updateUserRoleDto;
-    return this.userModel.findByIdAndUpdate(id, { role }, { new: true });
-  }
 
-  async updateUserStatus(updateUserStatusDto: UpdateUserStatusDto) {
-    const { id, status } = updateUserStatusDto;
+    // try to update user role
     const user = await this.userModel.findByIdAndUpdate(
       id,
-      { status },
-      { new: true, select: '-password' }
+      { role },
+      { new: true, select: '-password -activationLink' }
     );
 
+    // return error if user not found
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
+    // return user without password and activationLink
     return user;
   }
 
-  getAllUsers() {
-    return this.userModel.find();
+  async updateUserStatus(updateUserStatusDto: UpdateUserStatusDto) {
+    // get id and status from dto
+    const { id, status } = updateUserStatusDto;
+
+    // try to update user status
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, select: '-password -activationLink' }
+    );
+
+    // return error if user not found
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    // return user without password and activationLink
+    return user;
   }
 
-  updateAttempt(updateUserAttemptsDto: UpdateUserAttemptsDto) {
+  async updateAttempt(updateUserAttemptsDto: UpdateUserAttemptsDto) {
+    // get id and attempts from dto
     const { id, attempts } = updateUserAttemptsDto;
-    return this.userModel.findByIdAndUpdate(id, { attempts }, { new: true });
+
+    // try to update user attempts
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      { attempts },
+      { new: true, select: '-password -activationLink' }
+    );
+    // return error if user not found
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    // return user without password and activationLink
+    return user;
+  }
+  getAllUsers(): Promise<User[]> {
+    return this.userModel.find();
   }
 }

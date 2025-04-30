@@ -24,6 +24,18 @@ import { User } from 'src/schemas/User.schema';
 @Controller('admin-users')
 export class AdminUsersController {
   constructor(private readonly adminUsersService: AdminUsersService) {}
+  @Get(':id')
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  getUserById(@Param() idDto: IdDto): Promise<User> {
+    // nest js automatically transform param :id to object idDto
+    return this.adminUsersService.getUserById(idDto);
+  }
+
+  @Patch('role')
+  @Roles('SUPER_ADMIN')
+  updateUserRole(@Body() updateUserRoleDto: UpdateUserRoleDto): Promise<User> {
+    return this.adminUsersService.updateUserRole(updateUserRoleDto);
+  }
 
   @Patch('status')
   @Roles('ADMIN', 'SUPER_ADMIN')
@@ -33,28 +45,17 @@ export class AdminUsersController {
     return this.adminUsersService.updateUserStatus(updateUserStatusDto);
   }
 
-  @Get(':id')
-  @Roles('ADMIN', 'SUPER_ADMIN')
-  getUserById(@Param() idDto: IdDto) {
-    // nest js automatically transform param :id to object idDto
-    return this.adminUsersService.getUserById(idDto);
-  }
-
-  @Patch('role')
-  @Roles('SUPER_ADMIN')
-  updateUserRole(@Body() updateUserRoleDto: UpdateUserRoleDto) {
-    return this.adminUsersService.updateUserRole(updateUserRoleDto);
-  }
-
   @Patch('attempts')
   @Roles('ADMIN', 'SUPER_ADMIN')
-  updateAttempt(@Body() updateUserAttemptsDto: UpdateUserAttemptsDto) {
+  updateAttempt(
+    @Body() updateUserAttemptsDto: UpdateUserAttemptsDto
+  ): Promise<User> {
     return this.adminUsersService.updateAttempt(updateUserAttemptsDto);
   }
 
   @Get()
   @Roles('ADMIN', 'SUPER_ADMIN')
-  getAllUsers() {
+  getAllUsers(): Promise<User[]> {
     return this.adminUsersService.getAllUsers();
   }
 }
