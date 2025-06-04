@@ -22,11 +22,23 @@ export const generateCells = ({
   for (let i = 0; i < countOfCells; i += 1) {
     const item: { coordinates: [number, number]; entity: string } = {
       coordinates: [i % rows, Math.floor(i / columns)],
-      entity: getRandomReward(rewards),
+      entity: 'empty',
     };
 
     cells.push(item);
   }
+
+  rewards.forEach((reward) => {
+    let placed = false;
+    while (!placed) {
+      const randomIndex = Math.floor(Math.random() * countOfCells);
+
+      if (cells[randomIndex].entity === 'empty') {
+        cells[randomIndex].entity = reward;
+        placed = true;
+      }
+    }
+  });
 
   return cells;
 };

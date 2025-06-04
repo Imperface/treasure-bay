@@ -15,7 +15,10 @@ import { User } from 'src/schemas/User.schema';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService
+    // private readonly emailService: EmailService
+  ) {}
 
   @Post('sign-up')
   signUpUser(@Body() signUpDto: SignUpUserDto): Promise<{ message: string }> {

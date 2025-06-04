@@ -5,19 +5,33 @@ import { User } from 'src/schemas/User.schema';
 import { Model } from 'mongoose';
 import { genSalt, hash } from 'bcrypt';
 import { SignOutUserDto } from './dto/sign-out-user.dto';
+import { MailService } from 'src/email/email.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly mailService: MailService
+  ) {}
 
   async signUpUser(signUpUserDto: SignUpUserDto): Promise<{ message: string }> {
+    const { email, nickname } = signUpUserDto;
+
+    //
+    // MAIL SERVICE FUNCTIONALITY
+    //
+    // this.mailService.sendEmail(
+    //   'sonel46870@firain.com',
+    //   'Test email',
+    //   'Test email',
+    //   'Test email'
+    // );
+
     // get user by email
-    const existingUserEmail = await this.getUserByEmail(signUpUserDto.email);
+    const existingUserEmail = await this.getUserByEmail(email);
 
     // get user by nickname
-    const existingUserNickname = await this.getUserByNickname(
-      signUpUserDto.nickname
-    );
+    const existingUserNickname = await this.getUserByNickname(nickname);
 
     // return error if user with the same email or nickname already exists
     if (existingUserEmail || existingUserNickname) {
@@ -26,6 +40,8 @@ export class UsersService {
         HttpStatus.CONFLICT
       );
     }
+
+    // this.emailService.sendTestEmail(email, 'Test email');
 
     // get salt
     const salt = await genSalt(10);

@@ -7,16 +7,6 @@ import { Field } from 'src/schemas/Field.schema';
 export class FieldsService {
   constructor(@InjectModel(Field.name) private fieldModel: Model<Field>) {}
 
-  generateField({
-    cells,
-    createdAt,
-  }: {
-    cells: { coordinates: [number, number]; entity: string }[];
-    createdAt: Date;
-  }) {
-    return this.fieldModel.create({ cells, createdAt });
-  }
-
   getAllFieldsAdmin() {
     return this.fieldModel.find();
   }
@@ -24,5 +14,4 @@ export class FieldsService {
   getFieldsById(id: string) {
     return this.fieldModel.findById(id);
   }
-  
 }
