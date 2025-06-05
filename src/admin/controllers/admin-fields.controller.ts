@@ -19,18 +19,15 @@ export class AdminFieldsController {
 
   @Post('generate')
   async generate(@Body() generateFieldDto: GenerateFieldDto) {
-    const { rows, columns, rewards } = generateFieldDto;
+    return this.adminFieldsService.generateField(generateFieldDto);
+    // const { errors } =
+    const fields =
+      await this.adminFieldsService.generateField(generateFieldDto);
 
-    const cells = generateCells({ rows, columns, rewards });
-
-    const field = { cells, createdAt: new Date() };
-
-    const { errors } = await this.adminFieldsService.generateField(field);
-
-    if (errors) {
-      throw new HttpException('Bad request', 400);
-    }
-
+    // if (errors) {
+    //   throw new HttpException('Bad request', 400);
+    // }
+    console.log('Generated fields:', fields);
     return {
       message: 'Field generated',
       // field,

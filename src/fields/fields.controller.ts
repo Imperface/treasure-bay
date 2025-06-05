@@ -23,4 +23,9 @@ export class FieldsController {
   async getFieldsById(@Param('id') id: string) {
     return await this.fieldsService.getFieldsById(id);
   }
+
+  // @Post("open")
+  // async openCell(@Body() ) {
+
+  // }
 }

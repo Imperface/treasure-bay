@@ -6,8 +6,9 @@ export class Field {
   @Prop({ required: true })
   cells: [
     {
-      coordinates: number[];
-      entity: 'reward' | 'empty';
+      xCoordinate: number;
+      yCoordinate: number;
+      entity: { type: string; default: 'empty' };
       isSelected: { type: boolean; default: false };
       owner: { type: null | mongo.ObjectId; default: null };
       openingDate: { type: null | Date; default: null };
